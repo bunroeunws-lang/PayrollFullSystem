@@ -282,7 +282,7 @@
             <select id="selectMonth" onchange="renderTable()">
               <option value="1">មករា</option>
               <option value="2">កុម្ភៈ</option>
-              <option value="3" selected>មីនា</option>
+              <option value="3">មីនា</option>
               <option value="4">មេសា</option>
               <option value="5">ឧសភា</option>
               <option value="6">មិថុនា</option>
@@ -486,7 +486,27 @@
         calculate();
       }
 
-      window.onload = renderTable;
+      window.onload = function() {
+          // ១. ចាប់យកថ្ងៃ ខែ ឆ្នាំ បច្ចុប្បន្នពីម៉ាស៊ីន
+          const now = new Date();
+          const currentMonth = now.getMonth() + 1; // JavaScript រាប់ខែពី 0-11
+          const currentYear = now.getFullYear();
+          const currentDay = now.getDate();
+
+          // ២. កំណត់តម្លៃទៅក្នុង UI
+          document.getElementById("selectMonth").value = currentMonth;
+          document.getElementById("selectYear").value = currentYear;
+
+          // ៣. កំណត់វគ្គដោយស្វ័យប្រវត្តិ (បើថ្ងៃលើសពី ១៥ យកវគ្គ ២)
+          if (currentDay > 15) {
+              changePeriod(2);
+          } else {
+              changePeriod(1);
+          }
+
+          // ៤. បង្ហាញតារាង
+          renderTable();
+      };
     </script>
   </body>
 </html>
