@@ -267,23 +267,78 @@
         letter-spacing: -1px;
       }
 
-      @media print {
-    /* បន្ថែមកូដនេះដើម្បីការពារការដាច់ Card ចំកណ្ដាល */
+@media print {
+    /* លាក់ផ្នែកដែលមិនចង់ឱ្យបង្ហាញពេលបោះពុម្ព */
+    .no-print {
+        display: none !important;
+    }
+
+    /* កំណត់ទំហំក្រដាស A4 និងដក Margin ចេញ */
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+
+    body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* ចំណុចសំខាន់៖ ការពារកុំឱ្យដាច់ Card ជាងម្នាក់ៗចូលក្រដាសថ្មី */
     .staff-card {
-        page-break-inside: avoid !important; /* បញ្ឈប់ការកាត់ផ្ដាច់ Card */
-        break-inside: avoid !important;      /* សម្រាប់ Browser ទំនើបៗ */
+        page-break-inside: avoid !important; /* បញ្ឈប់ការកាត់ផ្ដាច់ Card ចំកណ្ដាល */
+        break-inside: avoid !important;
         margin-bottom: 30px !important;
+        box-shadow: none !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    /* រៀបចំ Header ឱ្យស្អាតពេលបោះពុម្ព */
+    .card-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        background: #f8fafc !important;
+        -webkit-print-color-adjust: exact; /* ឱ្យបង្ហាញពណ៌ Background ពេលបោះពុម្ព */
+    }
+
+    .staff-name {
+        grid-column: unset;
+        margin: 0 auto;
+        border: 1px solid #ddd !important;
+    }
+
+    .header-actions {
+        display: block !important;
+    }
+
+    .header-actions .btn-danger-sm {
+        display: none !important;
+    }
+
+    /* បង្ហាញតម្លៃឈ្នួលឱ្យច្បាស់ */
+    .rate-input {
+        border: none !important;
+        background: transparent !important;
+        font-weight: bold !important;
+        width: 60px !important;
+    }
+
+    /* កែសម្រួលតារាងឱ្យមើលឃើញច្បាស់ */
+    table {
+        width: 100% !important;
         border: 1px solid #ccc !important;
     }
 
-    /* កែសម្រួលទំហំអក្សរឱ្យតូចជាងមុនបន្តិចដើម្បីឱ្យល្មមក្រដាសទូរស័ព្ទ */
-    body {
-        font-size: 12px !important;
+    th, td {
+        border: 1px solid #eee !important;
     }
 
-    table {
-        width: 100% !important;
-    }
+    /* បង្ហាញពណ៌ផ្ទៃក្នុងតារាងពេលបោះពុម្ព */
+    .att-input { background-color: #f0fdf4 !important; -webkit-print-color-adjust: exact; }
+    .ot-input { background-color: #fffbeb !important; -webkit-print-color-adjust: exact; }
+    .loan-input { background-color: #fef2f2 !important; -webkit-print-color-adjust: exact; }
 }
     </style>
   </head>
