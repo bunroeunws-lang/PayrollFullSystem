@@ -53,10 +53,39 @@
       .card-footer { padding: 30px; background: #ffffff; border-top: 2px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
       .total-amount { font-size: 36px; font-weight: 900; color: var(--primary); }
 
+      /* កំណត់សម្រាប់អេក្រង់ទូរស័ព្ទ */
+      @media screen and (max-width: 600px) {
+        body {
+          width: 100%;
+          padding: 10px;
+        }
+        .no-print form {
+          display: flex;
+          flex-direction: column;
+        }
+        table {
+          font-size: 11px;
+        }
+        .input-group {
+          flex-direction: column;
+        }
+      }
+
+      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
       @media print {
-        .no-print { display: none !important; }
-        body { padding: 0; background: white; }
-        .staff-card { box-shadow: none; border: 1px solid #eee; break-inside: avoid; }
+        body {
+          width: 600px;
+          margin: 0;
+          padding: 0;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .no-print,
+        .action-col {
+          display: none !important;
+        } /* លាក់ប៊ូតុងពេលបោះពុម្ព */
       }
     </style>
   </head>
