@@ -267,93 +267,30 @@
         letter-spacing: -1px;
       }
 
-      /* ផ្នែកកែសម្រួលពិសេសសម្រាប់ Print ឱ្យល្មម A4 */
-  @media print {
-    /* កំណត់ទំហំក្រដាស និង Margin */
-    @page {
-      size: A4;
-      margin: 10mm 15mm; /* លើក្រោម 10mm ឆ្វេងស្តាំ 15mm */
-    }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        .card-header {
+          display: flex !important;
+          justify-content: center;
+          position: relative;
+        }
+        /* បង្ហាញតម្លៃឈ្នួល ប៉ុន្តែលាក់ប៊ូតុងលុប */
+        .header-actions {
+          display: block !important;
+        }
+        .header-actions .btn-danger-sm {
+          display: none !important;
+        }
 
-    /* លាក់ប៊ូតុង និងផ្នែកដែលមិនពាក់ព័ន្ធ */
-    .no-print, .btn-danger-sm {
-      display: none !important;
-    }
-
-    body {
-      background: white !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      -webkit-print-color-adjust: exact; /* ឱ្យបង្ហាញពណ៌ Background ពេល print */
-    }
-
-    /* ការពារកុំឱ្យដាច់ Card ជាងម្នាក់ៗចូលក្រដាសថ្មី */
-    .staff-card {
-      page-break-inside: avoid !important;
-      break-inside: avoid !important;
-      box-shadow: none !important;
-      border: 1px solid #ddd !important;
-      margin-bottom: 50px !important; /* បន្ថែមគម្លាតរវាងជាងម្នាក់ទៅម្នាក់ទៀត */
-      width: 100% !important;
-    }
-
-    .card-header {
-      background: #f8fafc !important;
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      padding: 15px !important;
-      border-bottom: 2px solid #eee !important;
-    }
-
-    .staff-name {
-      grid-column: unset !important;
-      margin: 0 !important;
-      font-size: 20px !important;
-      border: 1px solid #eee !important;
-      background: white !important;
-    }
-
-    .header-actions {
-      display: block !important;
-    }
-
-    /* រៀបចំតារាងឱ្យពេញទទឹងក្រដាស */
-    table {
-      width: 100% !important;
-      border-collapse: collapse !important;
-    }
-
-    th {
-      background: #f1f5f9 !important;
-      color: #333 !important;
-      border: 1px solid #ccc !important;
-    }
-
-    td {
-      border: 1px solid #eee !important;
-    }
-
-    .cell-input {
-      border: none !important;
-      background: transparent !important;
-      font-size: 16px !important;
-    }
-
-    /* បង្ហាញពណ៌ក្នុងប្រអប់ឱ្យច្បាស់ */
-    .att-input { background-color: #f0fdf4 !important; }
-    .ot-input { background-color: #fffbeb !important; }
-    .loan-input { background-color: #fef2f2 !important; }
-
-    .card-footer {
-      border-top: 1px dashed #ccc !important;
-      padding: 20px !important;
-    }
-
-    .total-amount {
-      font-size: 30px !important;
-    }
-  }
+        /* កែសម្រួល input ឱ្យមើលឃើញច្បាស់ពេល print */
+        .rate-input {
+          border: none !important;
+          background: transparent !important;
+          font-weight: bold !important;
+        }
+      }
     </style>
   </head>
   <body>
