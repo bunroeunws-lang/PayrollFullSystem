@@ -240,20 +240,22 @@
       }
 
       @media print {
-        .no-print {
-          display: none !important;
-        }
-        .card-header {
-          display: flex !important;
-          justify-content: center;
-          position: relative;
-        }
-        /* បង្ហាញតម្លៃឈ្នួល ប៉ុន្តែលាក់ប៊ូតុងលុប */
-        .header-actions {
-          display: block !important;
-        }
-        .header-actions .btn-danger-sm {
-          display: none !important;
+            /* បន្ថែមកូដនេះដើម្បីការពារការដាច់ Card ចំកណ្ដាល */
+            .staff-card {
+                page-break-inside: avoid !important; /* បញ្ឈប់ការកាត់ផ្ដាច់ Card */
+                break-inside: avoid !important;      /* សម្រាប់ Browser ទំនើបៗ */
+                margin-bottom: 30px !important;
+                border: 1px solid #ccc !important;
+            }
+        
+            /* កែសម្រួលទំហំអក្សរឱ្យតូចជាងមុនបន្តិចដើម្បីឱ្យល្មមក្រដាសទូរស័ព្ទ */
+            body {
+                font-size: 12px !important;
+            }
+        
+            table {
+                width: 100% !important;
+            }
         }
 
         /* កែសម្រួល input ឱ្យមើលឃើញច្បាស់ពេល print */
