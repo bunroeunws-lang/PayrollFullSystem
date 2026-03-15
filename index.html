@@ -21,33 +21,38 @@
         --bg-ot: #fffbeb;
         --bg-loan: #fef2f2;
       }
-      /* បន្ថែម CSS នេះដើម្បីឱ្យដើរលើទូរសព្ទបានល្អ */
-      @media (max-width: 600px) {
-          body { padding: 10px; }
-          
-          .controls { 
-              flex-direction: column; 
-              align-items: stretch; 
-          }
-          
-          .btn { width: 100%; justify-content: center; }
+      @media screen and (max-width: 600px) {
+        body {
+          width: 100%;
+          padding: 10px;
+        }
+        .no-print form {
+          display: flex;
+          flex-direction: column;
+        }
+        table {
+          font-size: 11px;
+        }
+        .input-group {
+          flex-direction: column;
+        }
+      }
 
-          .card-header {
-              display: flex;
-              flex-direction: column;
-              gap: 10px;
-              text-align: center;
-          }
-
-          /* បង្រួមតារាងឱ្យមើលឃើញគ្រប់លើអេក្រង់តូច */
-          table { font-size: 14px; }
-          .cell-input { font-size: 15px; height: 40px; }
-          
-          .card-footer {
-              flex-direction: column;
-              gap: 20px;
-              text-align: center;
-          }
+      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
+      @media print {
+        body {
+          width: 790px;
+          margin: 0;
+          padding: 0;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .no-print,
+        .action-col {
+          display: none !important;
+        } /* លាក់ប៊ូតុងពេលបោះពុម្ព */
       }
 
       * {
@@ -265,31 +270,6 @@
         font-weight: 900;
         color: var(--primary);
         letter-spacing: -1px;
-      }
-
-      @media print {
-        .no-print {
-          display: none !important;
-        }
-        .card-header {
-          display: flex !important;
-          justify-content: center;
-          position: relative;
-        }
-        /* បង្ហាញតម្លៃឈ្នួល ប៉ុន្តែលាក់ប៊ូតុងលុប */
-        .header-actions {
-          display: block !important;
-        }
-        .header-actions .btn-danger-sm {
-          display: none !important;
-        }
-
-        /* កែសម្រួល input ឱ្យមើលឃើញច្បាស់ពេល print */
-        .rate-input {
-          border: none !important;
-          background: transparent !important;
-          font-weight: bold !important;
-        }
       }
     </style>
   </head>
