@@ -4,218 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Payroll Management System - Cloud Edition</title>
-
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
-
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600;700&display=swap");
-
-      :root {
-        --primary: #4f46e5;
-        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --background: #f1f5f9;
-        --surface: #ffffff;
-        --border: #e2e8f0;
-      }
-
-      * {
-        box-sizing: border-box;
-        font-family: "Kantumruy Pro", sans-serif;
-      }
-      body {
-        background-color: var(--background);
-        color: #1e293b;
-        margin: 0;
-        padding: 20px;
-        line-height: 1.5;
-      }
-
-      .header-panel {
-        max-width: 900px;
-        margin: 0 auto 30px;
-        background: var(--surface);
-        padding: 24px;
-        border-radius: 20px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--border);
-      }
-      .controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        flex-wrap: wrap;
-        gap: 20px;
-      }
-
-      .input-group label {
-        font-size: 13px;
-        font-weight: 700;
-        color: #64748b;
-        margin-bottom: 8px;
-        display: block;
-      }
-      select,
-      input[type="number"] {
-        height: 42px;
-        padding: 0 12px;
-        border: 2px solid var(--border);
-        border-radius: 10px;
-        background: #fff;
-        font-size: 15px;
-        font-weight: 600;
-        outline: none;
-        transition: border-color 0.2s;
-      }
-      select:focus,
-      input:focus {
-        border-color: var(--primary);
-      }
-
-      .btn {
-        height: 42px;
-        padding: 0 20px;
-        border-radius: 10px;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        transition: opacity 0.2s;
-      }
-      .btn:active {
-        opacity: 0.8;
-      }
-      .btn-primary {
-        background: var(--primary-gradient);
-        color: white;
-      }
-      .btn-success {
-        background: var(--success);
-        color: white;
-      }
-
-      /* ប៊ូតុងលុបតូចនៅជ្រុងកាត */
-      .delete-staff-btn {
-        background: #fee2e2;
-        color: #ef4444;
-        border: none;
-        padding: 5px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 700;
-        transition: 0.2s;
-        margin-left: 10px;
-      }
-      .delete-staff-btn:hover {
-        background: #ef4444;
-        color: white;
-      }
-
-      .period-selector {
-        display: flex;
-        background: #e2e8f0;
-        padding: 5px;
-        border-radius: 12px;
-        margin-top: 20px;
-      }
-      .p-btn {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 9px;
-        background: transparent;
-        cursor: pointer;
-        font-weight: 700;
-        color: #475569;
-      }
-      .p-btn.active {
-        background: white;
-        color: var(--primary);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      }
-
-      .staff-card {
-        max-width: 900px;
-        margin: 0 auto 40px;
-        background: var(--surface);
-        border-radius: 20px;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-      }
-      .card-header {
-        padding: 24px;
-        background: #f8fafc;
-        border-bottom: 2px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .staff-name {
-        font-size: 22px;
-        font-weight: 800;
-        color: var(--primary);
-        padding: 5px 20px;
-        background: white;
-        border-radius: 50px;
-        border: 1px solid var(--border);
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th {
-        padding: 15px;
-        background: #f1f5f9;
-        font-size: 13px;
-        font-weight: 700;
-        color: #475569;
-        border-bottom: 2px solid var(--border);
-      }
-      td {
-        border-bottom: 1px solid var(--border);
-        height: 48px;
-        text-align: center;
-      }
-
-      .cell-input {
-        width: 100%;
-        height: 100%;
-        border: none;
-        text-align: center;
-        font-size: 17px;
-        font-weight: 700;
-        background: transparent;
-        outline: none;
-      }
-      .row-day {
-        background: #f8fafc;
-        font-weight: 700;
-        width: 70px;
-        border-right: 1px solid var(--border);
-      }
-
-      .card-footer {
-        padding: 30px;
-        background: #ffffff;
-        border-top: 2px dashed var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .total-amount {
-        font-size: 36px;
-        font-weight: 900;
-        color: var(--primary);
-      }
+      :root { --primary: #4f46e5; --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --background: #f1f5f9; --surface: #ffffff; --border: #e2e8f0; }
+      * { box-sizing: border-box; font-family: "Kantumruy Pro", sans-serif; }
+      body { background-color: var(--background); color: #1e293b; margin: 0; padding: 20px; line-height: 1.5; }
+      .header-panel { max-width: 900px; margin: 0 auto 30px; background: var(--surface); padding: 24px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); }
+      .controls { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
+      .input-group label { font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; display: block; }
+      select, input[type="number"] { height: 42px; padding: 0 12px; border: 2px solid var(--border); border-radius: 10px; background: #fff; font-size: 15px; font-weight: 600; outline: none; }
+      .btn { height: 42px; padding: 0 20px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+      .btn-primary { background: var(--primary-gradient); color: white; }
+      .btn-success { background: var(--success); color: white; }
+      .delete-staff-btn { background: #fee2e2; color: #ef4444; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; margin-left: 10px; }
+      .period-selector { display: flex; background: #e2e8f0; padding: 5px; border-radius: 12px; margin-top: 20px; }
+      .p-btn { flex: 1; padding: 12px; border: none; border-radius: 9px; background: transparent; cursor: pointer; font-weight: 700; color: #475569; }
+      .p-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); }
+      .staff-card { max-width: 900px; margin: 0 auto 40px; background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
+      .card-header { padding: 24px; background: #f8fafc; border-bottom: 2px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+      .staff-name { font-size: 22px; font-weight: 800; color: var(--primary); padding: 5px 20px; background: white; border-radius: 50px; border: 1px solid var(--border); }
+      table { width: 100%; border-collapse: collapse; }
+      th { padding: 15px; background: #f1f5f9; font-size: 13px; font-weight: 700; color: #475569; border-bottom: 2px solid var(--border); }
+      td { border-bottom: 1px solid var(--border); height: 48px; text-align: center; }
+      .cell-input { width: 100%; height: 100%; border: none; text-align: center; font-size: 17px; font-weight: 700; background: transparent; outline: none; }
+      .row-day { background: #f8fafc; font-weight: 700; width: 70px; border-right: 1px solid var(--border); }
+      .card-footer { padding: 30px; background: #ffffff; border-top: 2px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
+      .total-amount { font-size: 36px; font-weight: 900; color: var(--primary); }
 
       @media screen and (max-width: 600px) {
         body {
@@ -277,45 +93,23 @@
           <label>កំណត់ត្រាខែ/ឆ្នាំ</label>
           <div style="display: flex; gap: 10px">
             <select id="selectMonth" onchange="loadValues()"></select>
-            <input
-              type="number"
-              id="selectYear"
-              style="width: 100px"
-              onchange="loadValues()"
-            />
+            <input type="number" id="selectYear" style="width: 100px" onchange="loadValues()" />
           </div>
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap">
-          <button class="btn btn-primary" onclick="addNewStaff()">
-            ➕ បន្ថែមជាង
-          </button>
-          <button class="btn btn-success" onclick="saveAll()">
-            ☁️ រក្សាទុកលើ Cloud
-          </button>
-          <button
-            class="btn"
-            style="background: #e2e8f0"
-            onclick="window.print()"
-          >
-            🖨️ បោះពុម្ព
-          </button>
+          <button class="btn btn-primary" onclick="addNewStaff()">➕ បន្ថែមជាង</button>
+          <button class="btn btn-success" onclick="saveAll()">☁️ រក្សាទុកលើ Cloud</button>
+          <button class="btn" style="background: #e2e8f0" onclick="window.print()">🖨️ បោះពុម្ព</button>
         </div>
       </div>
-
       <div class="period-selector">
-        <button id="p1" class="p-btn active" onclick="changePeriod(1)">
-          វគ្គ ១ (០១ - ១៥)
-        </button>
-        <button id="p2" class="p-btn" onclick="changePeriod(2)">
-          វគ្គ ២ (១៦ - បញ្ចប់ខែ)
-        </button>
+        <button id="p1" class="p-btn active" onclick="changePeriod(1)">វគ្គ ១ (០១ - ១៥)</button>
+        <button id="p2" class="p-btn" onclick="changePeriod(2)">វគ្គ ២ (១៦ - បញ្ចប់ខែ)</button>
       </div>
     </div>
-
     <div id="payrollContent"></div>
 
     <script>
-      // --- ១. ការកំណត់ Firebase ---
       const firebaseConfig = {
         apiKey: "AIzaSyDZAqny0JqLDF0IsTDcgArh3yXew1FNoX8",
         authDomain: "payrollfullsystem.firebaseapp.com",
@@ -323,34 +117,18 @@
         storageBucket: "payrollfullsystem.firebasestorage.app",
         messagingSenderId: "408546677960",
         appId: "1:408546677960:web:88d7e03ad91644f11e81fd",
-        databaseURL:
-          "https://payrollfullsystem-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        databaseURL: "https://payrollfullsystem-default-rtdb.asia-southeast1.firebasedatabase.app/",
       };
 
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
-
       let staff = [];
       let currentPeriod = 1;
 
-      // --- ២. Setup UI ---
       window.onload = function () {
         const now = new Date();
+        const months = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
         const monthSelect = document.getElementById("selectMonth");
-        const months = [
-          "មករា",
-          "កុម្ភៈ",
-          "មីនា",
-          "មេសា",
-          "ឧសភា",
-          "មិថុនា",
-          "កក្កដា",
-          "សីហា",
-          "កញ្ញា",
-          "តុលា",
-          "វិច្ឆិកា",
-          "ធ្នូ",
-        ];
         months.forEach((m, i) => {
           let opt = document.createElement("option");
           opt.value = i + 1;
@@ -359,12 +137,7 @@
         });
         monthSelect.value = now.getMonth() + 1;
         document.getElementById("selectYear").value = now.getFullYear();
-
-        if (now.getDate() > 15) {
-          changePeriod(2);
-        } else {
-          loadValues();
-        }
+        if (now.getDate() > 15) changePeriod(2); else loadValues();
       };
 
       function changePeriod(p) {
@@ -374,42 +147,13 @@
         loadValues();
       }
 
-      // --- ៣. Cloud Logic ---
-      function saveAll() {
-        const m = document.getElementById("selectMonth").value;
-        const y = document.getElementById("selectYear").value;
-        const key = `payroll/${y}/${m}/P${currentPeriod}`;
-
-        const data = {
-          inputs: {},
-          rates: [],
-          staff_list: staff,
-        };
-
-        document.querySelectorAll(".cell-input").forEach((el, idx) => {
-          if (el.value) data.inputs[idx] = el.value;
-        });
-        document
-          .querySelectorAll(".rate-input")
-          .forEach((el) => data.rates.push(el.value));
-
-        db.ref(key)
-          .set(data)
-          .then(() => alert("រក្សាទុកលើ Cloud ជោគជ័យ! ☁️✅"))
-          .catch((err) => alert("កំហុសក្នុងការ Save: " + err));
-      }
-// --- កែមុខងារ loadValues ថ្មី ដើម្បីឱ្យឈ្មោះជាងដើរស្របគ្នាគ្រប់ខែ ---
       function loadValues() {
         const m = document.getElementById("selectMonth").value;
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
 
-        // ១. ទាញបញ្ជីឈ្មោះមេ (Global List) មកបង្ហាញមុនគេជានិច្ច
         db.ref("global_staff_list").once("value", (globalSnapshot) => {
-          const globalStaff = globalSnapshot.val() || [{ name: "ឈ្មោះជាង", rate: 15 }];
-          staff = globalStaff; // កំណត់បញ្ជីឈ្មោះជាងឱ្យទៅជាបញ្ជីមេជានិច្ច
-
-          // ២. ទាញទិន្នន័យលេខវត្តមាន ឬខ្ចីលុយពី Cloud មកបំពេញតាមក្រោយ
+          staff = globalSnapshot.val() || [];
           db.ref(key).once("value", (snapshot) => {
             const savedData = snapshot.val() || {};
             renderTable(savedData);
@@ -417,33 +161,36 @@
         });
       }
 
-      // --- កែមុខងារ addNewStaff ឱ្យវា Update ទៅ Global List ភ្លាមៗ ---
+      function updateGlobalRate(index, newRate) {
+        const rate = parseFloat(newRate) || 0;
+        staff[index].rate = rate;
+        db.ref("global_staff_list").set(staff);
+        calculate();
+      }
+
       function addNewStaff() {
-        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី (វានឹងបង្ហាញគ្រប់ខែ):");
+        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
         if (name) {
-          // ទាញបញ្ជីចាស់មកសិន រួចថែមឈ្មោះថ្មីចូល
-          db.ref("global_staff_list").once("value", (snapshot) => {
-            let currentGlobalStaff = snapshot.val() || [];
-            currentGlobalStaff.push({ name: name, rate: 15 });
-            
-            // រុញទៅ Global List វិញ
-            db.ref("global_staff_list").set(currentGlobalStaff).then(() => {
-              loadValues(); // រួច Load ឡើងវិញឱ្យឃើញឈ្មោះថ្មីភ្លាម
+          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
+          if (rate !== null) {
+            db.ref("global_staff_list").once("value", (snapshot) => {
+              let currentGlobalStaff = snapshot.val() || [];
+              currentGlobalStaff.push({ name: name, rate: parseFloat(rate) || 0 });
+              db.ref("global_staff_list").set(currentGlobalStaff).then(() => {
+                loadValues();
+              });
             });
-          });
+          }
         }
       }
 
-      // --- កែមុខងារ deleteStaff ឱ្យលុបចេញពី Global List ដែរ ---
       function deleteStaff(index) {
-        if (confirm("តើប្អូនចង់លុបឈ្មោះ " + staff[index].name + " ចេញពីគ្រប់ខែទាំងអស់មែនទេ?")) {
+        if (confirm("តើប្អូនចង់លុប " + staff[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
           staff.splice(index, 1);
-          db.ref("global_staff_list").set(staff).then(() => {
-            loadValues();
-          });
+          db.ref("global_staff_list").set(staff).then(() => loadValues());
         }
       }
-      // --- ៤. Render Table ---
+
       function renderTable(savedData) {
         const month = document.getElementById("selectMonth").value;
         const year = document.getElementById("selectYear").value;
@@ -453,78 +200,75 @@
 
         let html = "";
         staff.forEach((p, i) => {
-          let currentRate =
-            savedData.rates && savedData.rates[i] ? savedData.rates[i] : p.rate;
           html += `
-                <div class="staff-card">
-                    <div class="card-header">
-                        <div style="display: flex; align-items: center;">
-                            <div class="staff-name">👤 ${p.name}</div>
-                            <button class="delete-staff-btn no-print" onclick="deleteStaff(${i})">🗑️ លុប</button>
-                        </div>
-                        <div style="text-align:right">
-                            <span style="font-size:11px; font-weight:bold; color:#64748b;">តម្លៃក្នុង១ថ្ងៃ ($)</span><br>
-                            <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${currentRate}" 
-                                   style="width:80px; height:35px; color:var(--primary); text-align:center; font-weight:bold; border:1px solid #ddd; border-radius:5px;" 
-                                   oninput="calculate()">
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr><th width="70">ថ្ងៃទី</th><th>វត្តមាន (ថ្ងៃ)</th><th>OT (ម៉ោង)</th><th>ខ្ចីលុយ ($)</th></tr>
-                        </thead>
-                        <tbody>`;
+            <div class="staff-card">
+              <div class="card-header">
+                <div style="display: flex; align-items: center;">
+                  <div class="staff-name">👤 ${p.name}</div>
+                  <button class="delete-staff-btn no-print" onclick="deleteStaff(${i})">🗑️ លុប</button>
+                </div>
+                <div style="text-align:right">
+                  <span style="font-size:11px; font-weight:bold; color:#64748b;">តម្លៃក្នុង១ថ្ងៃ ($)</span><br>
+                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${p.rate}" 
+                         style="width:80px; height:35px; color:var(--primary); text-align:center; font-weight:bold; border:1px solid #ddd; border-radius:5px;" 
+                         onchange="updateGlobalRate(${i}, this.value)">
+                </div>
+              </div>
+              <table>
+                <thead>
+                  <tr><th width="70">ថ្ងៃទី</th><th>វត្តមាន (ថ្ងៃ)</th><th>OT (ម៉ោង)</th><th>ខ្ចីលុយ ($)</th></tr>
+                </thead>
+                <tbody>`;
           for (let d = start; d <= end; d++) {
             html += `<tr>
-                        <td class="row-day">${d}</td>
-                        <td><input type="number" step="0.5" class="cell-input att-${i}" oninput="calculate()"></td>
-                        <td><input type="number" step="0.5" class="cell-input ot-${i}" oninput="calculate()"></td>
-                        <td><input type="number" step="1" class="cell-input loan-${i}" oninput="calculate()"></td>
-                    </tr>`;
+              <td class="row-day">${d}</td>
+              <td><input type="number" step="0.5" class="cell-input att-${i}" oninput="calculate()"></td>
+              <td><input type="number" step="0.5" class="cell-input ot-${i}" oninput="calculate()"></td>
+              <td><input type="number" step="1" class="cell-input loan-${i}" oninput="calculate()"></td>
+            </tr>`;
           }
           html += `</tbody></table>
-                    <div class="card-footer">
-                        <div style="display:flex; gap:30px;">
-                            <div><span style="display:block; font-size:12px; color:#64748b">សរុបវត្តមាន</span><span style="font-size:18px; font-weight:800; color:var(--success)"><span id="total-days-${i}">0</span> ថ្ងៃ</span></div>
-                            <div><span style="display:block; font-size:12px; color:#64748b">សរុបខ្ចីលុយ</span><span style="font-size:18px; font-weight:800; color:var(--danger)">-$<span id="total-loan-${i}">0.00</span></span></div>
-                        </div>
-                        <div style="text-align:right">
-                            <div style="font-size:13px; font-weight:700; color:var(--primary)">ប្រាក់ខែត្រូវបើកសរុប</div>
-                            <div class="total-amount">$<span id="usd-${i}">0.00</span></div>
-                        </div>
-                    </div>
-                </div>`;
+              <div class="card-footer">
+                <div style="display:flex; gap:30px;">
+                  <div><span style="display:block; font-size:12px; color:#64748b">សរុបវត្តមាន</span><span style="font-size:18px; font-weight:800; color:var(--success)"><span id="total-days-${i}">0</span> ថ្ងៃ</span></div>
+                  <div><span style="display:block; font-size:12px; color:#64748b">សរុបខ្ចីលុយ</span><span style="font-size:18px; font-weight:800; color:var(--danger)">-$<span id="total-loan-${i}">0.00</span></span></div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:13px; font-weight:700; color:var(--primary)">ប្រាក់ខែត្រូវបើកសរុប</div>
+                  <div class="total-amount">$<span id="usd-${i}">0.00</span></div>
+                </div>
+              </div>
+            </div>`;
         });
         document.getElementById("payrollContent").innerHTML = html;
-
         if (savedData.inputs) {
-          document.querySelectorAll(".cell-input").forEach((el, idx) => {
-            el.value = savedData.inputs[idx] || "";
-          });
+          document.querySelectorAll(".cell-input").forEach((el, idx) => { el.value = savedData.inputs[idx] || ""; });
         }
         calculate();
       }
 
-      // --- ៥. Functions ---
-      function calculate() {  
+      function calculate() {
         staff.forEach((p, i) => {
-          let days = 0,
-            loan = 0;
-          let rate =
-            parseFloat(document.getElementById(`rate-${i}`).value) || 0;
-          document
-            .querySelectorAll(`.att-${i}`)
-            .forEach((el) => (days += parseFloat(el.value) || 0));
-          document
-            .querySelectorAll(`.loan-${i}`)
-            .forEach((el) => (loan += parseFloat(el.value) || 0));
+          let days = 0, loan = 0;
+          let rate = parseFloat(document.getElementById(`rate-${i}`).value) || 0;
+          document.querySelectorAll(`.att-${i}`).forEach((el) => (days += parseFloat(el.value) || 0));
+          document.querySelectorAll(`.loan-${i}`).forEach((el) => (loan += parseFloat(el.value) || 0));
           document.getElementById(`total-days-${i}`).innerText = days;
-          document.getElementById(`total-loan-${i}`).innerText =
-            loan.toFixed(2);
+          document.getElementById(`total-loan-${i}`).innerText = loan.toFixed(2);
           let grandTotal = days * rate - loan;
-          document.getElementById(`usd-${i}`).innerText =
-            grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
+          document.getElementById(`usd-${i}`).innerText = grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
         });
+      }
+
+      function saveAll() {
+        const m = document.getElementById("selectMonth").value;
+        const y = document.getElementById("selectYear").value;
+        const key = `payroll/${y}/${m}/P${currentPeriod}`;
+        const data = { inputs: {} };
+        document.querySelectorAll(".cell-input").forEach((el, idx) => {
+          if (el.value) data.inputs[idx] = el.value;
+        });
+        db.ref(key).set(data).then(() => alert("រក្សាទុកជោគជ័យ! ✅"));
       }
     </script>
   </body>
