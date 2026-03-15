@@ -398,28 +398,51 @@
           .then(() => alert("រក្សាទុកលើ Cloud ជោគជ័យ! ☁️✅"))
           .catch((err) => alert("កំហុសក្នុងការ Save: " + err));
       }
-
+// --- កែមុខងារ loadValues ថ្មី ដើម្បីឱ្យឈ្មោះជាងដើរស្របគ្នាគ្រប់ខែ ---
       function loadValues() {
         const m = document.getElementById("selectMonth").value;
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
 
-        db.ref(key).once("value", (snapshot) => {
-          const savedData = snapshot.val() || {};
+        // ១. ទាញបញ្ជីឈ្មោះមេ (Global List) មកបង្ហាញមុនគេជានិច្ច
+        db.ref("global_staff_list").once("value", (globalSnapshot) => {
+          const globalStaff = globalSnapshot.val() || [{ name: "ឈ្មោះជាង", rate: 15 }];
+          staff = globalStaff; // កំណត់បញ្ជីឈ្មោះជាងឱ្យទៅជាបញ្ជីមេជានិច្ច
 
-          if (savedData.staff_list) {
-            staff = savedData.staff_list;
+          // ២. ទាញទិន្នន័យលេខវត្តមាន ឬខ្ចីលុយពី Cloud មកបំពេញតាមក្រោយ
+          db.ref(key).once("value", (snapshot) => {
+            const savedData = snapshot.val() || {};
             renderTable(savedData);
-          } else {
-            // បើខែនេះអត់ទាន់មានឈ្មោះទេ ទៅទាញពីបញ្ជីមេ (Global List) មកវិញ
-            db.ref("global_staff_list").once("value", (globalSnapshot) => {
-              staff = globalSnapshot.val() || [{ name: "ឈ្មោះជាង", rate: 15 }];
-              renderTable(savedData);
-            });
-          }
+          });
         });
       }
 
+      // --- កែមុខងារ addNewStaff ឱ្យវា Update ទៅ Global List ភ្លាមៗ ---
+      function addNewStaff() {
+        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី (វានឹងបង្ហាញគ្រប់ខែ):");
+        if (name) {
+          // ទាញបញ្ជីចាស់មកសិន រួចថែមឈ្មោះថ្មីចូល
+          db.ref("global_staff_list").once("value", (snapshot) => {
+            let currentGlobalStaff = snapshot.val() || [];
+            currentGlobalStaff.push({ name: name, rate: 15 });
+            
+            // រុញទៅ Global List វិញ
+            db.ref("global_staff_list").set(currentGlobalStaff).then(() => {
+              loadValues(); // រួច Load ឡើងវិញឱ្យឃើញឈ្មោះថ្មីភ្លាម
+            });
+          });
+        }
+      }
+
+      // --- កែមុខងារ deleteStaff ឱ្យលុបចេញពី Global List ដែរ ---
+      function deleteStaff(index) {
+        if (confirm("តើប្អូនចង់លុបឈ្មោះ " + staff[index].name + " ចេញពីគ្រប់ខែទាំងអស់មែនទេ?")) {
+          staff.splice(index, 1);
+          db.ref("global_staff_list").set(staff).then(() => {
+            loadValues();
+          });
+        }
+      }
       // --- ៤. Render Table ---
       function renderTable(savedData) {
         const month = document.getElementById("selectMonth").value;
@@ -483,7 +506,7 @@
       }
 
       // --- ៥. Functions ---
-      function calculate() {
+      function calculate() {  
         staff.forEach((p, i) => {
           let days = 0,
             loan = 0;
@@ -502,38 +525,6 @@
           document.getElementById(`usd-${i}`).innerText =
             grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
         });
-      }
-
-      function addNewStaff() {
-        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
-        if (name) {
-          // ១. បន្ថែមក្នុងបញ្ជីបច្ចុប្បន្ន
-          staff.push({ name: name, rate: 15 });
-
-          // ២. រក្សាទុកក្នុងបញ្ជីឈ្មោះមេ (Master List) ដើម្បីប្រើសម្រាប់ខែក្រោយៗ
-          db.ref("global_staff_list").set(staff);
-
-          saveAll();
-          loadValues();
-        }
-      }
-
-      function deleteStaff(index) {
-        if (
-          confirm("តើប្អូនពិតជាចង់លុបជាង " + staff[index].name + " ចេញមែនទេ?")
-        ) {
-          staff.splice(index, 1);
-          const m = document.getElementById("selectMonth").value;
-          const y = document.getElementById("selectYear").value;
-          const key = `payroll/${y}/${m}/P${currentPeriod}`;
-
-          db.ref(key)
-            .update({ staff_list: staff })
-            .then(() => {
-              alert("លុបជាងរួចរាល់! 🗑️");
-              loadValues();
-            });
-        }
       }
     </script>
   </body>
