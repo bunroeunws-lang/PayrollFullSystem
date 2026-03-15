@@ -7,6 +7,7 @@
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600;700&display=swap");
 
+      /* ... (រក្សារចនាប័ទ្ម CSS ចាស់របស់អ្នកទាំងអស់) ... */
       :root {
         --primary: #4f46e5;
         --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
@@ -21,255 +22,41 @@
         --bg-ot: #fffbeb;
         --bg-loan: #fef2f2;
       }
-      @media screen and (max-width: 600px) {
-        body {
-          width: 100%;
-          padding: 10px;
-        }
-        .no-print form {
-          display: flex;
-          flex-direction: column;
-        }
-        table {
-          font-size: 11px;
-        }
-        .input-group {
-          flex-direction: column;
-        }
-      }
+      
+      * { box-sizing: border-box; font-family: "Kantumruy Pro", sans-serif; }
+      body { background-color: var(--background); color: var(--text-main); margin: 0; padding: 20px; line-height: 1.5; }
+      .header-panel { max-width: 900px; margin: 0 auto 30px; background: var(--surface); padding: 24px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+      .controls { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
+      .input-group label { font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; display: block; }
+      select, input[type="number"] { height: 42px; padding: 0 12px; border: 2px solid var(--border); border-radius: 10px; background: #fff; font-size: 15px; font-weight: 600; outline: none; }
+      .btn { height: 42px; padding: 0 20px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+      .btn-primary { background: var(--primary-gradient); color: white; }
+      .btn-success { background: #10b981; color: white; }
+      .btn-outline { background: white; border: 2px solid var(--border); color: var(--text-main); }
+      .btn-warning { background: #fef3c7; color: #92400e; }
+      .btn-danger-sm { background: #fee2e2; color: var(--danger); padding: 5px 12px; height: 32px; font-size: 12px; border-radius: 8px; }
+      .period-selector { display: flex; background: #e2e8f0; padding: 5px; border-radius: 12px; margin-top: 20px; }
+      .p-btn { flex: 1; padding: 12px; border: none; border-radius: 9px; background: transparent; cursor: pointer; font-weight: 700; color: #475569; }
+      .p-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+      .staff-card { max-width: 900px; margin: 0 auto 40px; background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); }
+      .card-header { padding: 24px; background: #f8fafc; border-bottom: 2px solid var(--border); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+      .staff-name { grid-column: 2; font-size: 22px; font-weight: 800; color: var(--primary); padding: 5px 20px; background: white; border-radius: 50px; border: 1px solid var(--border); }
+      .header-actions { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 15px; }
+      table { width: 100%; border-collapse: collapse; }
+      th { padding: 15px; background: #f1f5f9; font-size: 13px; font-weight: 700; color: #475569; border-bottom: 2px solid var(--border); }
+      td { border-bottom: 1px solid var(--border); height: 48px; }
+      .row-day { background: #f8fafc; font-weight: 700; width: 70px; text-align: center; border-right: 1px solid var(--border); }
+      .cell-input { width: 100%; height: 48px; border: none; text-align: center; font-size: 17px; font-weight: 700; background: transparent; outline: none; }
+      .att-input { background-color: var(--bg-att); color: var(--success); }
+      .ot-input { background-color: var(--bg-ot); color: var(--warning); }
+      .loan-input { background-color: var(--bg-loan); color: var(--danger); }
+      .card-footer { padding: 30px; background: #ffffff; border-top: 2px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
+      .total-amount { font-size: 36px; font-weight: 900; color: var(--primary); }
 
-      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
       @media print {
-        body {
-          width: 790px;
-          margin: 0;
-          padding: 0;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .no-print,
-        .action-col {
-          display: none !important;
-        } /* លាក់ប៊ូតុងពេលបោះពុម្ព */
-      }
-
-      * {
-        box-sizing: border-box;
-        font-family: "Kantumruy Pro", sans-serif;
-      }
-
-      body {
-        background-color: var(--background);
-        color: var(--text-main);
-        margin: 0;
-        padding: 20px;
-        line-height: 1.5;
-      }
-
-      .header-panel {
-        max-width: 900px;
-        margin: 0 auto 30px;
-        background: var(--surface);
-        padding: 24px;
-        border-radius: 20px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--border);
-      }
-
-      .controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        flex-wrap: wrap;
-        gap: 20px;
-      }
-      .input-group label {
-        font-size: 13px;
-        font-weight: 700;
-        color: #64748b;
-        margin-bottom: 8px;
-        display: block;
-      }
-
-      select,
-      input[type="number"] {
-        height: 42px;
-        padding: 0 12px;
-        border: 2px solid var(--border);
-        border-radius: 10px;
-        background: #fff;
-        font-size: 15px;
-        font-weight: 600;
-        outline: none;
-        transition: all 0.2s;
-      }
-
-      .btn {
-        height: 42px;
-        padding: 0 20px;
-        border-radius: 10px;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.2s;
-        font-size: 14px;
-      }
-      .btn-primary {
-        background: var(--primary-gradient);
-        color: white;
-      }
-      .btn-success {
-        background: #10b981;
-        color: white;
-      }
-      .btn-outline {
-        background: white;
-        border: 2px solid var(--border);
-        color: var(--text-main);
-      }
-      .btn-danger-sm {
-        background: #fee2e2;
-        color: var(--danger);
-        padding: 5px 12px;
-        height: 32px;
-        font-size: 12px;
-        border-radius: 8px;
-      }
-
-      .period-selector {
-        display: flex;
-        background: #e2e8f0;
-        padding: 5px;
-        border-radius: 12px;
-        margin-top: 20px;
-      }
-      .p-btn {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 9px;
-        background: transparent;
-        cursor: pointer;
-        font-weight: 700;
-        color: #475569;
-        transition: all 0.2s;
-      }
-      .p-btn.active {
-        background: white;
-        color: var(--primary);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      }
-
-      /* Staff Card */
-      .staff-card {
-        max-width: 900px;
-        margin: 0 auto 40px;
-        background: var(--surface);
-        border-radius: 20px;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-      }
-
-      /* កែប្រែ Card Header ឲ្យឈ្មោះនៅកណ្ដាល */
-      .card-header {
-        padding: 24px;
-        background: #f8fafc;
-        border-bottom: 2px solid var(--border);
-        display: grid;
-        grid-template-columns: 1fr auto 1fr; /* ចែកជា ៣ ផ្នែក */
-        align-items: center;
-      }
-
-      .staff-name {
-        grid-column: 2; /* ឲ្យឈ្មោះនៅជួរទី ២ (កណ្ដាល) */
-        font-size: 22px;
-        font-weight: 800;
-        color: var(--primary);
-        text-shadow: 1px 1px 0px white;
-        padding: 5px 20px;
-        background: white;
-        border-radius: 50px;
-        border: 1px solid var(--border);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-      }
-
-      .header-actions {
-        grid-column: 3;
-        justify-self: end;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-      }
-
-      /* Table Styling */
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th {
-        padding: 15px;
-        background: #f1f5f9;
-        font-size: 13px;
-        font-weight: 700;
-        color: #475569;
-        border-bottom: 2px solid var(--border);
-      }
-      td {
-        border-bottom: 1px solid var(--border);
-        height: 48px;
-      }
-      .row-day {
-        background: #f8fafc;
-        font-weight: 700;
-        width: 70px;
-        text-align: center;
-        border-right: 1px solid var(--border);
-      }
-
-      .cell-input {
-        width: 100%;
-        height: 48px;
-        border: none;
-        text-align: center;
-        font-size: 17px;
-        font-weight: 700;
-        background: transparent;
-        outline: none;
-      }
-
-      .att-input {
-        background-color: var(--bg-att);
-        color: var(--success);
-      }
-      .ot-input {
-        background-color: var(--bg-ot);
-        color: var(--warning);
-      }
-      .loan-input {
-        background-color: var(--bg-loan);
-        color: var(--danger);
-      }
-
-      .card-footer {
-        padding: 30px;
-        background: #ffffff;
-        border-top: 2px dashed var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .total-amount {
-        font-size: 36px;
-        font-weight: 900;
-        color: var(--primary);
-        letter-spacing: -1px;
+        .no-print { display: none !important; }
+        body { padding: 0; background: white; }
+        .staff-card { box-shadow: none; border: 1px solid #eee; break-inside: avoid; }
       }
     </style>
   </head>
@@ -280,49 +67,30 @@
           <label>កំណត់ត្រាខែ/ឆ្នាំ</label>
           <div style="display: flex; gap: 10px">
             <select id="selectMonth" onchange="renderTable()">
-              <option value="1">មករា</option>
-              <option value="2">កុម្ភៈ</option>
-              <option value="3">មីនា</option>
-              <option value="4">មេសា</option>
-              <option value="5">ឧសភា</option>
-              <option value="6">មិថុនា</option>
-              <option value="7">កក្កដា</option>
-              <option value="8">សីហា</option>
-              <option value="9">កញ្ញា</option>
-              <option value="10">តុលា</option>
-              <option value="11">វិច្ឆិកា</option>
-              <option value="12">ធ្នូ</option>
+              <option value="1">មករា</option><option value="2">កុម្ភៈ</option>
+              <option value="3">មីនា</option><option value="4">មេសា</option>
+              <option value="5">ឧសភា</option><option value="6">មិថុនា</option>
+              <option value="7">កក្កដា</option><option value="8">សីហា</option>
+              <option value="9">កញ្ញា</option><option value="10">តុលា</option>
+              <option value="11">វិច្ឆិកា</option><option value="12">ធ្នូ</option>
             </select>
-            <input
-              type="number"
-              id="selectYear"
-              value="2026"
-              style="width: 100px"
-              onchange="renderTable()"
-            />
+            <input type="number" id="selectYear" value="2026" style="width: 100px" onchange="renderTable()"/>
           </div>
         </div>
 
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="addNewStaff()">
-            ➕ បន្ថែមជាង
-          </button>
-          <button class="btn btn-success" onclick="saveAll()">
-            💾 រក្សាទុក
-          </button>
-          <button class="btn btn-outline" onclick="window.print()">
-            🖨️ បោះពុម្ព
-          </button>
+        <div class="btn-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="addNewStaff()">➕ បន្ថែមជាង</button>
+          <button class="btn btn-success" onclick="saveAll()">💾 រក្សាទុក</button>
+          <button class="btn btn-warning" onclick="backupData()">📤 Backup</button>
+          <button class="btn btn-outline" onclick="triggerRestore()">📥 Restore</button>
+          <button class="btn btn-outline" onclick="window.print()">🖨️ បោះពុម្ព</button>
+          <input type="file" id="restoreFile" style="display:none" onchange="restoreData(event)" accept=".json">
         </div>
       </div>
 
       <div class="period-selector">
-        <button id="p1" class="p-btn active" onclick="changePeriod(1)">
-          វគ្គ ១ (០១ - ១៥)
-        </button>
-        <button id="p2" class="p-btn" onclick="changePeriod(2)">
-          វគ្គ ២ (១៦ - បញ្ចប់ខែ)
-        </button>
+        <button id="p1" class="p-btn active" onclick="changePeriod(1)">វគ្គ ១ (០១ - ១៥)</button>
+        <button id="p2" class="p-btn" onclick="changePeriod(2)">វគ្គ ២ (១៦ - បញ្ចប់ខែ)</button>
       </div>
     </div>
 
@@ -330,8 +98,18 @@
 
     <script>
       let staff = JSON.parse(localStorage.getItem("staff_list")) || [
+        { name: "ជាងនីត", rate: 18 },
+        { name: "ចែដានី", rate: 17.5 },
       ];
       let currentPeriod = 1;
+
+      // ១. កំណត់ខែបច្ចុប្បន្នពេលបើកមកភ្លាម
+      window.onload = function() {
+        const now = new Date();
+        document.getElementById("selectMonth").value = now.getMonth() + 1;
+        document.getElementById("selectYear").value = now.getFullYear();
+        if (now.getDate() > 15) changePeriod(2); else renderTable();
+      };
 
       function changePeriod(p) {
         currentPeriod = p;
@@ -381,38 +159,22 @@
                 </div>
                 <table>
                     <thead>
-                        <tr>
-                            <th width="70">ថ្ងៃទី</th>
-                            <th>វត្តមាន (ថ្ងៃ)</th>
-                            <th>OT (ម៉ោង)</th>
-                            <th>ខ្ចីលុយ ($)</th>
-                        </tr>
+                        <tr><th width="70">ថ្ងៃទី</th><th>វត្តមាន (ថ្ងៃ)</th><th>OT (ម៉ោង)</th><th>ខ្ចីលុយ ($)</th></tr>
                     </thead>
                     <tbody>`;
-
           for (let d = start; d <= end; d++) {
-            html += `
-                    <tr>
+            html += `<tr>
                         <td class="row-day">${d}</td>
                         <td><input type="number" step="0.5" class="cell-input att-input att-${i}" oninput="calculate()"></td>
                         <td><input type="number" step="0.5" class="cell-input ot-input ot-${i}" oninput="calculate()"></td>
                         <td><input type="number" step="1" class="cell-input loan-input loan-${i}" oninput="calculate()"></td>
                     </tr>`;
           }
-
-          html += `
-                    </tbody>
-                </table>
+          html += `</tbody></table>
                 <div class="card-footer">
                     <div style="display:flex; gap:40px;">
-                        <div class="stat-box">
-                            <span class="stat-label">សរុបវត្តមាន</span>
-                            <span style="font-size:18px; font-weight:800; color:var(--success)"><span id="total-days-${i}">0</span> ថ្ងៃ</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-label">សរុបខ្ចីលុយ</span>
-                            <span style="font-size:18px; font-weight:800; color:var(--danger)">-$<span id="total-loan-${i}">0.00</span></span>
-                        </div>
+                        <div><span style="display:block; font-size:12px; color:#64748b">សរុបវត្តមាន</span><span style="font-size:18px; font-weight:800; color:var(--success)"><span id="total-days-${i}">0</span> ថ្ងៃ</span></div>
+                        <div><span style="display:block; font-size:12px; color:#64748b">សរុបខ្ចីលុយ</span><span style="font-size:18px; font-weight:800; color:var(--danger)">-$<span id="total-loan-${i}">0.00</span></span></div>
                     </div>
                     <div style="text-align:right">
                         <div style="font-size:13px; font-weight:700; color:var(--primary)">ប្រាក់ខែត្រូវបើកសរុប</div>
@@ -421,28 +183,19 @@
                 </div>
             </div>`;
         });
-
         document.getElementById("payrollContent").innerHTML = html;
         loadValues();
       }
 
       function calculate() {
         staff.forEach((p, i) => {
-          let days = 0,
-            loan = 0;
+          let days = 0, loan = 0;
           let r = parseFloat(document.getElementById(`rate-${i}`).value) || 0;
-          document
-            .querySelectorAll(`.att-${i}`)
-            .forEach((el) => (days += parseFloat(el.value) || 0));
-          document
-            .querySelectorAll(`.loan-${i}`)
-            .forEach((el) => (loan += parseFloat(el.value) || 0));
-          let totalUsd = days * r - loan;
+          document.querySelectorAll(`.att-${i}`).forEach(el => days += parseFloat(el.value) || 0);
+          document.querySelectorAll(`.loan-${i}`).forEach(el => loan += parseFloat(el.value) || 0);
           document.getElementById(`total-days-${i}`).innerText = days;
-          document.getElementById(`total-loan-${i}`).innerText =
-            loan.toFixed(2);
-          document.getElementById(`usd-${i}`).innerText =
-            totalUsd.toLocaleString(undefined, { minimumFractionDigits: 2 });
+          document.getElementById(`total-loan-${i}`).innerText = loan.toFixed(2);
+          document.getElementById(`usd-${i}`).innerText = (days * r - loan).toLocaleString(undefined, { minimumFractionDigits: 2 });
         });
       }
 
@@ -451,12 +204,8 @@
         const y = document.getElementById("selectYear").value;
         const key = `payroll_center_${y}_${m}_P${currentPeriod}`;
         const data = { inputs: {}, rates: [] };
-        document.querySelectorAll(".cell-input").forEach((el, idx) => {
-          if (el.value) data.inputs[idx] = el.value;
-        });
-        document
-          .querySelectorAll(".rate-input")
-          .forEach((el) => data.rates.push(el.value));
+        document.querySelectorAll(".cell-input").forEach((el, idx) => { if (el.value) data.inputs[idx] = el.value; });
+        document.querySelectorAll(".rate-input").forEach(el => data.rates.push(el.value));
         localStorage.setItem(key, JSON.stringify(data));
         localStorage.setItem("staff_list", JSON.stringify(staff));
         alert("រក្សាទុកជោគជ័យ! ✨");
@@ -467,44 +216,41 @@
         const y = document.getElementById("selectYear").value;
         const key = `payroll_center_${y}_${m}_P${currentPeriod}`;
         const saved = JSON.parse(localStorage.getItem(key) || "{}");
-        if (saved.inputs) {
-          document
-            .querySelectorAll(".cell-input")
-            .forEach((el, idx) => (el.value = saved.inputs[idx] || ""));
-        }
-        if (saved.rates) {
-          document
-            .querySelectorAll(".rate-input")
-            .forEach(
-              (el, idx) =>
-                (el.value =
-                  saved.rates[idx] || (staff[idx] ? staff[idx].rate : 15)),
-            );
-        }
+        if (saved.inputs) document.querySelectorAll(".cell-input").forEach((el, idx) => el.value = saved.inputs[idx] || "");
+        if (saved.rates) document.querySelectorAll(".rate-input").forEach((el, idx) => el.value = saved.rates[idx] || (staff[idx] ? staff[idx].rate : 15));
         calculate();
       }
 
-      window.onload = function() {
-          // ១. ចាប់យកថ្ងៃ ខែ ឆ្នាំ បច្ចុប្បន្នពីម៉ាស៊ីន
-          const now = new Date();
-          const currentMonth = now.getMonth() + 1; // JavaScript រាប់ខែពី 0-11
-          const currentYear = now.getFullYear();
-          const currentDay = now.getDate();
+      // --- មុខងារ Backup & Restore ---
+      function backupData() {
+        let allData = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          let key = localStorage.key(i);
+          allData[key] = localStorage.getItem(key);
+        }
+        let blob = new Blob([JSON.stringify(allData)], { type: "application/json" });
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `payroll_backup_${new Date().toLocaleDateString()}.json`;
+        a.click();
+      }
 
-          // ២. កំណត់តម្លៃទៅក្នុង UI
-          document.getElementById("selectMonth").value = currentMonth;
-          document.getElementById("selectYear").value = currentYear;
+      function triggerRestore() { document.getElementById("restoreFile").click(); }
 
-          // ៣. កំណត់វគ្គដោយស្វ័យប្រវត្តិ (បើថ្ងៃលើសពី ១៥ យកវគ្គ ២)
-          if (currentDay > 15) {
-              changePeriod(2);
-          } else {
-              changePeriod(1);
-          }
-
-          // ៤. បង្ហាញតារាង
-          renderTable();
-      };
+      function restoreData(event) {
+        let file = event.target.files[0];
+        if (!file) return;
+        let reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            let importedData = JSON.parse(e.target.result);
+            Object.keys(importedData).forEach(key => localStorage.setItem(key, importedData[key]));
+            alert("ស្តារទិន្នន័យជោគជ័យ! កម្មវិធីនឹង Refresh ឥឡូវនេះ។");
+            location.reload();
+          } catch (err) { alert("File មិនត្រឹមត្រូវទេ!"); }
+        };
+        reader.readAsText(file);
+      }
     </script>
   </body>
 </html>
