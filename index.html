@@ -153,9 +153,13 @@
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
 
         db.ref("global_staff_list").once("value", (globalSnapshot) => {
-          staff = globalSnapshot.val() || [];
+          staffList = globalSnapshot.val() || [];
+          
+          // ទាញទិន្នន័យខែដែលបានជ្រើសរើស
           db.ref(key).once("value", (snapshot) => {
             const savedData = snapshot.val() || {};
+            
+            // បង្កើតតារាងដោយប្រើ savedData ដើម្បីឆែកមើល Rate ចាស់
             renderTable(savedData);
           });
         });
@@ -191,7 +195,7 @@
         }
       }
 
-      function renderTable(savedData) {
+function renderTable(savedData) {
         const month = document.getElementById("selectMonth").value;
         const year = document.getElementById("selectYear").value;
         const lastDay = new Date(year, month, 0).getDate();
@@ -199,7 +203,15 @@
         let end = currentPeriod === 1 ? 15 : lastDay;
 
         let html = "";
-        staff.forEach((p, i) => {
+        staffList.forEach((p, i) => {
+          // --- ចំណុចកែសម្រួលសំខាន់ ---
+          // ១. ឆែកមើលក្នុង savedData.rates មុនគេ (តម្លៃដែលធ្លាប់ Save ក្នុងខែហ្នឹង)
+          // ២. បើអត់មាន ទើបប្រើតម្លៃពីបញ្ជីរួម (p.rate)
+          let currentRate = p.rate; 
+          if (savedData.rates && savedData.rates[i] !== undefined) {
+            currentRate = savedData.rates[i];
+          }
+
           html += `
             <div class="staff-card">
               <div class="card-header">
@@ -209,9 +221,9 @@
                 </div>
                 <div style="text-align:right">
                   <span style="font-size:11px; font-weight:bold; color:#64748b;">តម្លៃក្នុង១ថ្ងៃ ($)</span><br>
-                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${p.rate}" 
+                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${currentRate}" 
                          style="width:80px; height:35px; color:var(--primary); text-align:center; font-weight:bold; border:1px solid #ddd; border-radius:5px;" 
-                         onchange="updateGlobalRate(${i}, this.value)">
+                         oninput="calculate()">
                 </div>
               </div>
               <table>
@@ -241,12 +253,14 @@
             </div>`;
         });
         document.getElementById("payrollContent").innerHTML = html;
+        
         if (savedData.inputs) {
-          document.querySelectorAll(".cell-input").forEach((el, idx) => { el.value = savedData.inputs[idx] || ""; });
+          document.querySelectorAll(".cell-input").forEach((el, idx) => {
+            el.value = savedData.inputs[idx] || "";
+          });
         }
         calculate();
       }
-
       function calculate() {
         staff.forEach((p, i) => {
           let days = 0, loan = 0;
@@ -260,16 +274,35 @@
         });
       }
 
-      function saveAll() {
+	function saveAll() {
         const m = document.getElementById("selectMonth").value;
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
-        const data = { inputs: {} };
+        
+        const data = { 
+          inputs: {},
+          rates: {} // បង្កើត Object សម្រាប់រក្សាទុក Rate ដាច់ដោយឡែក
+        };
+
+        // រក្សាទុកវត្តមាន
         document.querySelectorAll(".cell-input").forEach((el, idx) => {
           if (el.value) data.inputs[idx] = el.value;
         });
-        db.ref(key).set(data).then(() => alert("រក្សាទុកជោគជ័យ! ✅"));
-      }
-    </script>
+
+        // រក្សាទុក Rate ក្នុងខែនេះ និង Update ទៅបញ្ជីរួម (Global)
+        let updatedStaffList = [...staffList];
+        document.querySelectorAll(".rate-input").forEach((el, i) => {
+          let newRate = parseFloat(el.value) || 0;
+          data.rates[i] = newRate; // រក្សាទុកក្នុងខែនេះ
+          if(updatedStaffList[i]) updatedStaffList[i].rate = newRate; // កែក្នុងបញ្ជីរួម
+        });
+
+        db.ref(key).set(data).then(() => {
+          db.ref("global_staff_list").set(updatedStaffList).then(() => {
+            alert("រក្សាទុកជោគជ័យ! ✅ តម្លៃនេះនឹងជាប់ក្នុងខែនេះ ហើយប្រើសម្រាប់ខែក្រោយៗទៀត។");
+          });
+        });
+      }    
+	</script>
   </body>
 </html>
