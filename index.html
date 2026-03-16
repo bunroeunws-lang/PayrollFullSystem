@@ -53,14 +53,14 @@
       /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
      /* កែសម្រួលសម្រាប់ការបោះពុម្ព (រក្សាទម្រង់ស្អាត តែបង្រួមទំហំសរុប) */
       @media print {
-        @page { size: A4; margin: 10mm; }
+        @page { size: A4; margin: none; }
         body { background: white; padding: 0; }
         .no-print { display: none !important; }
         .staff-card { 
           box-shadow: none !important; 
           border: 1px solid var(--border) !important;
           margin: 0 !important;
-          zoom: 0.85; /* បង្រួមទំហំសរុបឱ្យនៅ ៨៥% ដើម្បីឱ្យពេញមួយសន្លឹក A4 ស្អាត */
+          zoom: 0.80; /* បង្រួមទំហំសរុបឱ្យនៅ ៨៥% ដើម្បីឱ្យពេញមួយសន្លឹក A4 ស្អាត */
           -webkit-print-color-adjust: exact;
         }
         .card-header, th { background: #f8fafc !important; -webkit-print-color-adjust: exact; }
