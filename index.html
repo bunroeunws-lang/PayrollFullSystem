@@ -8,17 +8,20 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600;700&display=swap");
-      :root { --primary: #4f46e5; --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --background: #f1f5f9; --surface: #ffffff; --border: #e2e8f0; }
+      :root { --primary: #4f46e5; --primary-gradient: linear-gradient(135deg, #6366f1 0%, --primary 100%); --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --background: #f1f5f9; --surface: #ffffff; --border: #e2e8f0; }
       * { box-sizing: border-box; font-family: "Kantumruy Pro", sans-serif; }
       body { background-color: var(--background); color: #1e293b; margin: 0; padding: 20px; line-height: 1.5; }
       .header-panel { max-width: 900px; margin: 0 auto 30px; background: var(--surface); padding: 24px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); }
       .controls { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
       .input-group label { font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; display: block; }
-      select, input[type="number"] { height: 42px; padding: 0 12px; border: 2px solid var(--border); border-radius: 10px; background: #fff; font-size: 15px; font-weight: 600; outline: none; }
-      .btn { height: 42px; padding: 0 20px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+      select, input[type="number"] { height: 42px; padding: 0 12px; border: 2px solid var(--border); border-radius: 10px; background: #fff; font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s; }
+      select:focus, input:focus { border-color: var(--primary); }
+      .btn { height: 42px; padding: 0 20px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; transition: opacity 0.2s; }
+      .btn:active { opacity: 0.8; }
       .btn-primary { background: var(--primary-gradient); color: white; }
       .btn-success { background: var(--success); color: white; }
-      .delete-staff-btn { background: #fee2e2; color: #ef4444; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; margin-left: 10px; }
+      .delete-staff-btn { background: #fee2e2; color: #ef4444; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; transition: 0.2s; margin-left: 10px; }
+      .delete-staff-btn:hover { background: #ef4444; color: white; }
       .period-selector { display: flex; background: #e2e8f0; padding: 5px; border-radius: 12px; margin-top: 20px; }
       .p-btn { flex: 1; padding: 12px; border: none; border-radius: 9px; background: transparent; cursor: pointer; font-weight: 700; color: #475569; }
       .p-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); }
@@ -32,58 +35,8 @@
       .row-day { background: #f8fafc; font-weight: 700; width: 70px; border-right: 1px solid var(--border); }
       .card-footer { padding: 30px; background: #ffffff; border-top: 2px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
       .total-amount { font-size: 36px; font-weight: 900; color: var(--primary); }
-
-      @media screen and (max-width: 600px) {
-        body {
-          width: 100%;
-          padding: 10px;
-        }
-        .no-print form {
-          display: flex;
-          flex-direction: column;
-        }
-        table {
-          font-size: 11px;
-        }
-        .input-group {
-          flex-direction: column;
-        }
-      }
-
-      /* កំណត់សម្រាប់អេក្រង់ទូរស័ព្ទ */
-      @media screen and (max-width: 600px) {
-        body {
-          width: 100%;
-          padding: 10px;
-        }
-        .no-print form {
-          display: flex;
-          flex-direction: column;
-        }
-        table {
-          font-size: 11px;
-        }
-        .input-group {
-          flex-direction: column;
-        }
-      }
-
-      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
-      @media print {
-        body {
-          width: 765px;
-          margin: 0;
-          padding: 0;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .no-print,
-        .action-col {
-          display: none !important;
-        } /* លាក់ប៊ូតុងពេលបោះពុម្ព */
-      }
+      @media screen and (max-width: 600px) { body { width: 100%; padding: 10px; } .no-print form { display: flex; flex-direction: column; } table { font-size: 11px; } .input-group { flex-direction: column; } }
+      @media print { body { width: 765px; margin: 0; padding: 0; } table { width: 100%; border-collapse: collapse; } .no-print, .action-col { display: none !important; } }
     </style>
   </head>
   <body>
@@ -152,43 +105,16 @@
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
 
+        // ទាញបញ្ជីឈ្មោះមេ
         db.ref("global_staff_list").once("value", (globalSnapshot) => {
           staff = globalSnapshot.val() || [];
+          
+          // ទាញទិន្នន័យពីខែដែលបានរើស
           db.ref(key).once("value", (snapshot) => {
             const savedData = snapshot.val() || {};
             renderTable(savedData);
           });
         });
-      }
-
-      function updateGlobalRate(index, newRate) {
-        const rate = parseFloat(newRate) || 0;
-        staff[index].rate = rate;
-        db.ref("global_staff_list").set(staff);
-        calculate();
-      }
-
-      function addNewStaff() {
-        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
-        if (name) {
-          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
-          if (rate !== null) {
-            db.ref("global_staff_list").once("value", (snapshot) => {
-              let currentGlobalStaff = snapshot.val() || [];
-              currentGlobalStaff.push({ name: name, rate: parseFloat(rate) || 0 });
-              db.ref("global_staff_list").set(currentGlobalStaff).then(() => {
-                loadValues();
-              });
-            });
-          }
-        }
-      }
-
-      function deleteStaff(index) {
-        if (confirm("តើប្អូនចង់លុប " + staff[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
-          staff.splice(index, 1);
-          db.ref("global_staff_list").set(staff).then(() => loadValues());
-        }
       }
 
       function renderTable(savedData) {
@@ -200,6 +126,11 @@
 
         let html = "";
         staff.forEach((p, i) => {
+          // ចំណុចសំខាន់៖ បើមាន Rate ក្នុងខែហ្នឹង ប្រើ Rate ហ្នឹង បើអត់មាន ទើបប្រើ Rate ពីបញ្ជីរួម (Global)
+          let displayRate = (savedData.rates && savedData.rates[i] !== undefined) 
+                            ? savedData.rates[i] 
+                            : p.rate;
+
           html += `
             <div class="staff-card">
               <div class="card-header">
@@ -209,9 +140,9 @@
                 </div>
                 <div style="text-align:right">
                   <span style="font-size:11px; font-weight:bold; color:#64748b;">តម្លៃក្នុង១ថ្ងៃ ($)</span><br>
-                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${p.rate}" 
+                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${displayRate}" 
                          style="width:80px; height:35px; color:var(--primary); text-align:center; font-weight:bold; border:1px solid #ddd; border-radius:5px;" 
-                         onchange="updateGlobalRate(${i}, this.value)">
+                         oninput="calculate()">
                 </div>
               </div>
               <table>
@@ -260,15 +191,59 @@
         });
       }
 
+      function addNewStaff() {
+        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
+        if (name) {
+          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
+          if (rate !== null) {
+            db.ref("global_staff_list").once("value", (snapshot) => {
+              let currentGlobalStaff = snapshot.val() || [];
+              currentGlobalStaff.push({ name: name, rate: parseFloat(rate) || 0 });
+              db.ref("global_staff_list").set(currentGlobalStaff).then(() => {
+                loadValues();
+              });
+            });
+          }
+        }
+      }
+
+      function deleteStaff(index) {
+        if (confirm("តើប្អូនចង់លុប " + staff[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
+          staff.splice(index, 1);
+          db.ref("global_staff_list").set(staff).then(() => loadValues());
+        }
+      }
+
       function saveAll() {
         const m = document.getElementById("selectMonth").value;
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
-        const data = { inputs: {} };
+        
+        const data = { 
+          inputs: {},
+          rates: [] // បន្ថែមការរក្សាទុក Rate ក្នុងខែនេះ
+        };
+
+        // រក្សាទុកទិន្នន័យវត្តមាន
         document.querySelectorAll(".cell-input").forEach((el, idx) => {
           if (el.value) data.inputs[idx] = el.value;
         });
-        db.ref(key).set(data).then(() => alert("រក្សាទុកជោគជ័យ! ✅"));
+
+        // រក្សាទុក Rate ទៅក្នុងខែបច្ចុប្បន្ន និង Update ទៅ Global List សម្រាប់ខែក្រោយៗ
+        let updatedGlobal = [...staff];
+        document.querySelectorAll(".rate-input").forEach((el, i) => {
+          let newRate = parseFloat(el.value) || 0;
+          data.rates.push(newRate); // រក្សាទុកក្នុងខែនេះ
+          updatedGlobal[i].rate = newRate; // រៀបចំសម្រាប់ Update Global
+        });
+
+        // រក្សាទុកទិន្នន័យខែបច្ចុប្បន្ន
+        db.ref(key).set(data).then(() => {
+          // បន្ទាប់មក Update Global Rate ដើម្បីឱ្យខែក្រោយៗចាប់យកតម្លៃថ្មីនេះ
+          db.ref("global_staff_list").set(updatedGlobal).then(() => {
+            alert("រក្សាទុកជោគជ័យ! ✅ (តម្លៃថ្មីនឹងប្រើសម្រាប់ខែបន្ទាប់)");
+          });
+        });
       }
     </script>
   </body>
