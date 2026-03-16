@@ -32,29 +32,38 @@
       .row-day { background: #f8fafc; font-weight: 700; width: 70px; border-right: 1px solid var(--border); }
       .card-footer { padding: 30px; background: #ffffff; border-top: 2px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
       .total-amount { font-size: 36px; font-weight: 900; color: var(--primary); }
+      /* កំណត់សម្រាប់អេក្រង់ទូរស័ព្ទ */
+      @media screen and (max-width: 600px) {
+        body {
+          width: 100%;
+          padding: 10px;
+        }t
+        .no-print form {
+          display: flex;
+          flex-direction: column;
+        }
+        table {
+          font-size: 11px;
+        }
+        .input-group {
+          flex-direction: column;
+        }
+      }
+
+      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
+     /* កែសម្រួលសម្រាប់ការបោះពុម្ព (រក្សាទម្រង់ស្អាត តែបង្រួមទំហំសរុប) */
       @media print {
         @page { size: A4; margin: 10mm; }
         body { background: white; padding: 0; }
         .no-print { display: none !important; }
         .staff-card { 
-            box-shadow: none; 
-            border: 2px solid #000; 
-            margin-bottom: 0; 
-            width: 100%;
-            max-width: 100%;
-            page-break-after: always; /* ឱ្យម្នាក់ៗនៅសន្លឹកដាច់ដោយឡែកពីគ្នា */
+          box-shadow: none !important; 
+          border: 1px solid var(--border) !important;
+          margin: 0 !important;
+          zoom: 0.85; /* បង្រួមទំហំសរុបឱ្យនៅ ៨៥% ដើម្បីឱ្យពេញមួយសន្លឹក A4 ស្អាត */
+          -webkit-print-color-adjust: exact;
         }
-        .card-header { padding: 10px; background: #eee !important; -webkit-print-color-adjust: exact; }
-        .staff-name { border: 2px solid #000; color: black; }
-        th { background: #eee !important; border-bottom: 2px solid #000; -webkit-print-color-adjust: exact; }
-        td, th { border: 1px solid #000; }
-        .total-amount { color: black; font-size: 24px; }
-        .card-footer { padding: 10px; border-top: 2px solid #000; }
-      }
-
-      @media screen and (max-width: 600px) {
-        body { padding: 10px; }
-        table { font-size: 11px; }
+        .card-header, th { background: #f8fafc !important; -webkit-print-color-adjust: exact; }
       }
     </style>
   </head>
