@@ -11,8 +11,6 @@
       :root { --primary: #4f46e5; --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --background: #f1f5f9; --surface: #ffffff; --border: #e2e8f0; }
       * { box-sizing: border-box; font-family: "Kantumruy Pro", sans-serif; }
       body { background-color: var(--background); color: #1e293b; margin: 0; padding: 20px; line-height: 1.5; }
-      
-      /* UI Controls */
       .header-panel { max-width: 900px; margin: 0 auto 30px; background: var(--surface); padding: 24px; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); }
       .controls { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px; }
       .input-group label { font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; display: block; }
@@ -24,9 +22,7 @@
       .period-selector { display: flex; background: #e2e8f0; padding: 5px; border-radius: 12px; margin-top: 20px; }
       .p-btn { flex: 1; padding: 12px; border: none; border-radius: 9px; background: transparent; cursor: pointer; font-weight: 700; color: #475569; }
       .p-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); }
-
-      /* Staff Card Style - រក្សានៅដដែល ១០០% */
-      .staff-card { max-width: 900px; margin: 0 auto 40px; background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); page-break-after: always; }
+      .staff-card { max-width: 900px; margin: 0 auto 40px; background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
       .card-header { padding: 24px; background: #f8fafc; border-bottom: 2px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
       .staff-name { font-size: 22px; font-weight: 800; color: var(--primary); padding: 5px 20px; background: white; border-radius: 50px; border: 1px solid var(--border); }
       table { width: 100%; border-collapse: collapse; }
@@ -36,25 +32,39 @@
       .row-day { background: #f8fafc; font-weight: 700; width: 70px; border-right: 1px solid var(--border); }
       .card-footer { padding: 30px; background: #ffffff; border-top: 2px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
       .total-amount { font-size: 36px; font-weight: 900; color: var(--primary); }
-
-      /* ---------------------------------------------------------
-         បច្ចេកទេសបង្រួមដើម្បីឱ្យបោះពុម្ពត្រូវតាមទំហំក្រដាស JIS B5
-      ----------------------------------------------------------- */
-      @media print {
-        @page { size: JIS-B5; margin: 10mm; }
-        body { background: white !important; padding: 0 !important; margin: 0 !important; }
-        .no-print { display: none !important; }
-        .staff-card { 
-          box-shadow: none !important; 
-          border: 1px solid var(--border) !important;
-          margin: 0 !important;
-          width: 100% !important;
-          /* បង្រួមគ្រប់យ៉ាងឱ្យស្អាតក្នុង B5 ( Scale 80% ) */
-          zoom: 0.8; 
-          -webkit-print-color-adjust: exact;
-          border-radius: 20px !important; /* រក្សាជ្រុងមូល */
+      /* កំណត់សម្រាប់អេក្រង់ទូរស័ព្ទ */
+      @media screen and (max-width: 600px) {
+        body {
+          width: 100%;
+          padding: 10px;
+        }t
+        .no-print form {
+          display: flex;
+          flex-direction: column;
         }
-        .card-header, th { background: #f8fafc !important; -webkit-print-color-adjust: exact; }
+        table {
+          font-size: 11px;
+        }
+        .input-group {
+          flex-direction: column;
+        }
+      }
+
+      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
+      @media print {
+        body {
+          width: 765px;
+          margin: 0;
+          padding: 0;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .no-print,
+        .action-col {
+          display: none !important;
+        } /* លាក់ប៊ូតុងពេលបោះពុម្ព */
       }
     </style>
   </head>
@@ -94,7 +104,7 @@
 
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
-      let staffList = []; 
+      let staff = [];
       let currentPeriod = 1;
 
       window.onload = function () {
@@ -102,7 +112,10 @@
         const months = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
         const monthSelect = document.getElementById("selectMonth");
         months.forEach((m, i) => {
-          let opt = document.createElement("option"); opt.value = i + 1; opt.text = m; monthSelect.add(opt);
+          let opt = document.createElement("option");
+          opt.value = i + 1;
+          opt.text = m;
+          monthSelect.add(opt);
         });
         monthSelect.value = now.getMonth() + 1;
         document.getElementById("selectYear").value = now.getFullYear();
@@ -120,13 +133,44 @@
         const m = document.getElementById("selectMonth").value;
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
+
         db.ref("global_staff_list").once("value", (globalSnapshot) => {
-          staffList = globalSnapshot.val() || [];
+          staff = globalSnapshot.val() || [];
           db.ref(key).once("value", (snapshot) => {
             const savedData = snapshot.val() || {};
             renderTable(savedData);
           });
         });
+      }
+
+      function updateGlobalRate(index, newRate) {
+        const rate = parseFloat(newRate) || 0;
+        staff[index].rate = rate;
+        db.ref("global_staff_list").set(staff);
+        calculate();
+      }
+
+      function addNewStaff() {
+        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
+        if (name) {
+          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
+          if (rate !== null) {
+            db.ref("global_staff_list").once("value", (snapshot) => {
+              let currentGlobalStaff = snapshot.val() || [];
+              currentGlobalStaff.push({ name: name, rate: parseFloat(rate) || 0 });
+              db.ref("global_staff_list").set(currentGlobalStaff).then(() => {
+                loadValues();
+              });
+            });
+          }
+        }
+      }
+
+      function deleteStaff(index) {
+        if (confirm("តើប្អូនចង់លុប " + staff[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
+          staff.splice(index, 1);
+          db.ref("global_staff_list").set(staff).then(() => loadValues());
+        }
       }
 
       function renderTable(savedData) {
@@ -137,8 +181,7 @@
         let end = currentPeriod === 1 ? 15 : lastDay;
 
         let html = "";
-        staffList.forEach((p, i) => {
-          let currentRate = (savedData.rates && savedData.rates[i] !== undefined) ? savedData.rates[i] : p.rate;
+        staff.forEach((p, i) => {
           html += `
             <div class="staff-card">
               <div class="card-header">
@@ -148,9 +191,9 @@
                 </div>
                 <div style="text-align:right">
                   <span style="font-size:11px; font-weight:bold; color:#64748b;">តម្លៃក្នុង១ថ្ងៃ ($)</span><br>
-                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${currentRate}" 
+                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${p.rate}" 
                          style="width:80px; height:35px; color:var(--primary); text-align:center; font-weight:bold; border:1px solid #ddd; border-radius:5px;" 
-                         oninput="calculate()">
+                         onchange="updateGlobalRate(${i}, this.value)">
                 </div>
               </div>
               <table>
@@ -187,52 +230,27 @@
       }
 
       function calculate() {
-        staffList.forEach((p, i) => {
+        staff.forEach((p, i) => {
           let days = 0, loan = 0;
-          let rateEl = document.getElementById(`rate-${i}`);
-          let rate = rateEl ? parseFloat(rateEl.value) || 0 : p.rate;
+          let rate = parseFloat(document.getElementById(`rate-${i}`).value) || 0;
           document.querySelectorAll(`.att-${i}`).forEach((el) => (days += parseFloat(el.value) || 0));
           document.querySelectorAll(`.loan-${i}`).forEach((el) => (loan += parseFloat(el.value) || 0));
           document.getElementById(`total-days-${i}`).innerText = days;
           document.getElementById(`total-loan-${i}`).innerText = loan.toFixed(2);
-          let grandTotal = (days * rate) - loan;
+          let grandTotal = days * rate - loan;
           document.getElementById(`usd-${i}`).innerText = grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
         });
-      }
-
-      function addNewStaff() {
-        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
-        if (name) {
-          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
-          if (rate !== null) {
-            staffList.push({ name: name, rate: parseFloat(rate) || 0 });
-            db.ref("global_staff_list").set(staffList).then(() => loadValues());
-          }
-        }
-      }
-
-      function deleteStaff(index) {
-        if (confirm("តើប្អូនចង់លុប " + staffList[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
-          staffList.splice(index, 1);
-          db.ref("global_staff_list").set(staffList).then(() => loadValues());
-        }
       }
 
       function saveAll() {
         const m = document.getElementById("selectMonth").value;
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
-        const data = { inputs: {}, rates: {} };
-        document.querySelectorAll(".cell-input").forEach((el, idx) => { if (el.value) data.inputs[idx] = el.value; });
-        let updatedStaffList = [...staffList];
-        document.querySelectorAll(".rate-input").forEach((el, i) => {
-          let newRate = parseFloat(el.value) || 0;
-          data.rates[i] = newRate; 
-          if(updatedStaffList[i]) updatedStaffList[i].rate = newRate;
+        const data = { inputs: {} };
+        document.querySelectorAll(".cell-input").forEach((el, idx) => {
+          if (el.value) data.inputs[idx] = el.value;
         });
-        db.ref(key).set(data).then(() => {
-          db.ref("global_staff_list").set(updatedStaffList).then(() => alert("រក្សាទុកជោគជ័យ! ✅"));
-        });
+        db.ref(key).set(data).then(() => alert("រក្សាទុកជោគជ័យ! ✅"));
       }
     </script>
   </body>
