@@ -34,55 +34,16 @@
       .total-amount { font-size: 36px; font-weight: 900; color: var(--primary); }
 
       @media screen and (max-width: 600px) {
-        body {
-          width: 100%;
-          padding: 10px;
-        }
-        .no-print form {
-          display: flex;
-          flex-direction: column;
-        }
-        table {
-          font-size: 11px;
-        }
-        .input-group {
-          flex-direction: column;
-        }
+        body { width: 100%; padding: 10px; }
+        .no-print form { display: flex; flex-direction: column; }
+        table { font-size: 11px; }
+        .input-group { flex-direction: column; }
       }
 
-      /* កំណត់សម្រាប់អេក្រង់ទូរស័ព្ទ */
-      @media screen and (max-width: 600px) {
-        body {
-          width: 100%;
-          padding: 10px;
-        }
-        .no-print form {
-          display: flex;
-          flex-direction: column;
-        }
-        table {
-          font-size: 11px;
-        }
-        .input-group {
-          flex-direction: column;
-        }
-      }
-
-      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
       @media print {
-        body {
-          width: 765px;
-          margin: 0;
-          padding: 0;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .no-print,
-        .action-col {
-          display: none !important;
-        } /* លាក់ប៊ូតុងពេលបោះពុម្ព */
+        body { width: 765px; margin: 0; padding: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        .no-print, .action-col { display: none !important; }
       }
     </style>
   </head>
@@ -122,7 +83,7 @@
 
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
-      let staff = [];
+      let staffList = []; 
       let currentPeriod = 1;
 
       window.onload = function () {
@@ -153,42 +114,12 @@
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
 
         db.ref("global_staff_list").once("value", (globalSnapshot) => {
-          staff = globalSnapshot.val() || [];
+          staffList = globalSnapshot.val() || [];
           db.ref(key).once("value", (snapshot) => {
             const savedData = snapshot.val() || {};
             renderTable(savedData);
           });
         });
-      }
-
-      function updateGlobalRate(index, newRate) {
-        const rate = parseFloat(newRate) || 0;
-        staff[index].rate = rate;
-        db.ref("global_staff_list").set(staff);
-        calculate();
-      }
-
-      function addNewStaff() {
-        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
-        if (name) {
-          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
-          if (rate !== null) {
-            db.ref("global_staff_list").once("value", (snapshot) => {
-              let currentGlobalStaff = snapshot.val() || [];
-              currentGlobalStaff.push({ name: name, rate: parseFloat(rate) || 0 });
-              db.ref("global_staff_list").set(currentGlobalStaff).then(() => {
-                loadValues();
-              });
-            });
-          }
-        }
-      }
-
-      function deleteStaff(index) {
-        if (confirm("តើប្អូនចង់លុប " + staff[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
-          staff.splice(index, 1);
-          db.ref("global_staff_list").set(staff).then(() => loadValues());
-        }
       }
 
       function renderTable(savedData) {
@@ -199,7 +130,10 @@
         let end = currentPeriod === 1 ? 15 : lastDay;
 
         let html = "";
-        staff.forEach((p, i) => {
+        staffList.forEach((p, i) => {
+          // ឆែកមើលប្រាក់ឈ្នួលដែលបាន Save ក្នុងខែហ្នឹង បើអត់មានទើបប្រើបញ្ជីរួម
+          let currentRate = (savedData.rates && savedData.rates[i] !== undefined) ? savedData.rates[i] : p.rate;
+
           html += `
             <div class="staff-card">
               <div class="card-header">
@@ -209,9 +143,9 @@
                 </div>
                 <div style="text-align:right">
                   <span style="font-size:11px; font-weight:bold; color:#64748b;">តម្លៃក្នុង១ថ្ងៃ ($)</span><br>
-                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${p.rate}" 
+                  <input type="number" step="0.5" class="rate-input" id="rate-${i}" value="${currentRate}" 
                          style="width:80px; height:35px; color:var(--primary); text-align:center; font-weight:bold; border:1px solid #ddd; border-radius:5px;" 
-                         onchange="updateGlobalRate(${i}, this.value)">
+                         oninput="calculate()">
                 </div>
               </div>
               <table>
@@ -241,34 +175,78 @@
             </div>`;
         });
         document.getElementById("payrollContent").innerHTML = html;
+        
         if (savedData.inputs) {
-          document.querySelectorAll(".cell-input").forEach((el, idx) => { el.value = savedData.inputs[idx] || ""; });
+          document.querySelectorAll(".cell-input").forEach((el, idx) => {
+            el.value = savedData.inputs[idx] || "";
+          });
         }
         calculate();
       }
 
       function calculate() {
-        staff.forEach((p, i) => {
+        staffList.forEach((p, i) => {
           let days = 0, loan = 0;
-          let rate = parseFloat(document.getElementById(`rate-${i}`).value) || 0;
+          let rateEl = document.getElementById(`rate-${i}`);
+          let rate = rateEl ? parseFloat(rateEl.value) || 0 : p.rate;
+          
           document.querySelectorAll(`.att-${i}`).forEach((el) => (days += parseFloat(el.value) || 0));
           document.querySelectorAll(`.loan-${i}`).forEach((el) => (loan += parseFloat(el.value) || 0));
+          
           document.getElementById(`total-days-${i}`).innerText = days;
           document.getElementById(`total-loan-${i}`).innerText = loan.toFixed(2);
-          let grandTotal = days * rate - loan;
+          
+          let grandTotal = (days * rate) - loan;
           document.getElementById(`usd-${i}`).innerText = grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
         });
+      }
+
+      function addNewStaff() {
+        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
+        if (name) {
+          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
+          if (rate !== null) {
+            staffList.push({ name: name, rate: parseFloat(rate) || 0 });
+            db.ref("global_staff_list").set(staffList).then(() => loadValues());
+          }
+        }
+      }
+
+      function deleteStaff(index) {
+        if (confirm("តើប្អូនចង់លុប " + staffList[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
+          staffList.splice(index, 1);
+          db.ref("global_staff_list").set(staffList).then(() => loadValues());
+        }
       }
 
       function saveAll() {
         const m = document.getElementById("selectMonth").value;
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
-        const data = { inputs: {} };
+        
+        const data = { 
+          inputs: {},
+          rates: {} // រក្សាទុក Rate ក្នុងខែបច្ចុប្បន្ន
+        };
+
+        // រក្សាទុកវត្តមាន
         document.querySelectorAll(".cell-input").forEach((el, idx) => {
           if (el.value) data.inputs[idx] = el.value;
         });
-        db.ref(key).set(data).then(() => alert("រក្សាទុកជោគជ័យ! ✅"));
+
+        // រក្សាទុក Rate ក្នុងខែនេះ និង Update Global
+        let updatedStaffList = [...staffList];
+        document.querySelectorAll(".rate-input").forEach((el, i) => {
+          let newRate = parseFloat(el.value) || 0;
+          data.rates[i] = newRate; 
+          if(updatedStaffList[i]) updatedStaffList[i].rate = newRate;
+        });
+
+        db.ref(key).set(data).then(() => {
+          db.ref("global_staff_list").set(updatedStaffList).then(() => {
+            alert("រក្សាទុកជោគជ័យ! ✅");
+          });
+        });
       }
     </script>
   </body>
