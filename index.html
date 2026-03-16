@@ -49,26 +49,22 @@
           flex-direction: column;
         }
       }
-/* កែសម្រួលពិសេសសម្រាប់ iPhone / Safari (A4 Print) */
+
+      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
       @media print {
-        @page { size: A4; margin: 8mm; }
-        body { background: white !important; padding: 0 !important; margin: 0 !important; }
-        .no-print { display: none !important; }
-        .staff-card { 
-          box-shadow: none !important; 
-          border: 1px solid #d1d5db !important; 
-          margin: 0 !important; 
-          border-radius: 15px !important;
-          width: 100% !important;
-          -webkit-print-color-adjust: exact;
+        body {
+          width: 765px;
+          margin: 0;
+          padding: 0;
         }
-        /* បង្ខំឱ្យតារាងរួមតូចបន្តិច ដើម្បីឱ្យផុតពីគែមក្រដាស iPhone */
-        td { height: 38px !important; } 
-        th { padding: 8px !important; }
-        .card-header { padding: 12px 20px !important; }
-        .card-footer { padding: 15px 25px !important; }
-        .total-amount { font-size: 26px !important; }
-        .staff-name { font-size: 18px !important; }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .no-print,
+        .action-col {
+          display: none !important;
+        } /* លាក់ប៊ូតុងពេលបោះពុម្ព */
       }
     </style>
   </head>
