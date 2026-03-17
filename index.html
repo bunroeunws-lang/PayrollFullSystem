@@ -32,39 +32,18 @@
       .row-day { background: #f8fafc; font-weight: 700; width: 70px; border-right: 1px solid var(--border); }
       .card-footer { padding: 30px; background: #ffffff; border-top: 2px dashed var(--border); display: flex; justify-content: space-between; align-items: center; }
       .total-amount { font-size: 36px; font-weight: 900; color: var(--primary); }
-      /* កំណត់សម្រាប់អេក្រង់ទូរស័ព្ទ */
+      
+      /* បន្ថែមស្ទីលសម្រាប់បង្ហាញស្ថានភាព Auto Save */
+      .save-status { font-size: 12px; color: #64748b; font-style: italic; margin-top: 5px; }
+
       @media screen and (max-width: 600px) {
-        body {
-          width: 100%;
-          padding: 10px;
-        }t
-        .no-print form {
-          display: flex;
-          flex-direction: column;
-        }
-        table {
-          font-size: 11px;
-        }
-        .input-group {
-          flex-direction: column;
-        }
+        body { width: 100%; padding: 10px; }
+        table { font-size: 11px; }
       }
 
-      /* កំណត់សម្រាប់ពេលបោះពុម្ព (Print) */
       @media print {
-        body {
-          width: 765px;
-          margin: 0;
-          padding: 0;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        .no-print,
-        .action-col {
-          display: none !important;
-        } /* លាក់ប៊ូតុងពេលបោះពុម្ព */
+        body { width: 765px; margin: 0; padding: 0; }
+        .no-print, .action-col { display: none !important; }
       }
     </style>
   </head>
@@ -77,10 +56,11 @@
             <select id="selectMonth" onchange="loadValues()"></select>
             <input type="number" id="selectYear" style="width: 100px" onchange="loadValues()" />
           </div>
+          <div id="statusLabel" class="save-status">ស្ថានភាព: រួចរាល់</div>
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap">
           <button class="btn btn-primary" onclick="addNewStaff()">➕ បន្ថែមជាង</button>
-          <button class="btn btn-success" onclick="saveAll()">☁️ រក្សាទុកលើ Cloud</button>
+          <button class="btn btn-success" onclick="saveAll(true)">☁️ រក្សាទុកលើ Cloud</button>
           <button class="btn" style="background: #e2e8f0" onclick="window.print()">🖨️ បោះពុម្ព</button>
         </div>
       </div>
@@ -106,6 +86,7 @@
       const db = firebase.database();
       let staff = [];
       let currentPeriod = 1;
+      let autoSaveTimer;
 
       window.onload = function () {
         const now = new Date();
@@ -143,34 +124,14 @@
         });
       }
 
-      function updateGlobalRate(index, newRate) {
-        const rate = parseFloat(newRate) || 0;
-        staff[index].rate = rate;
-        db.ref("global_staff_list").set(staff);
+      function handleInput() {
         calculate();
-      }
-
-      function addNewStaff() {
-        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
-        if (name) {
-          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
-          if (rate !== null) {
-            db.ref("global_staff_list").once("value", (snapshot) => {
-              let currentGlobalStaff = snapshot.val() || [];
-              currentGlobalStaff.push({ name: name, rate: parseFloat(rate) || 0 });
-              db.ref("global_staff_list").set(currentGlobalStaff).then(() => {
-                loadValues();
-              });
-            });
-          }
-        }
-      }
-
-      function deleteStaff(index) {
-        if (confirm("តើប្អូនចង់លុប " + staff[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
-          staff.splice(index, 1);
-          db.ref("global_staff_list").set(staff).then(() => loadValues());
-        }
+        // លុប Timer ចាស់ រួចបង្កើតថ្មី (Auto Save ក្រោយផ្អាកវាយ ២ វិនាទី)
+        clearTimeout(autoSaveTimer);
+        document.getElementById("statusLabel").innerText = "ស្ថានភាព: កំពុងវាយ...";
+        autoSaveTimer = setTimeout(() => {
+          saveAll(false);
+        }, 2000);
       }
 
       function renderTable(savedData) {
@@ -204,9 +165,9 @@
           for (let d = start; d <= end; d++) {
             html += `<tr>
               <td class="row-day">${d}</td>
-              <td><input type="number" step="0.5" class="cell-input att-${i}" oninput="calculate()"></td>
-              <td><input type="number" step="0.5" class="cell-input ot-${i}" oninput="calculate()"></td>
-              <td><input type="number" step="1" class="cell-input loan-${i}" oninput="calculate()"></td>
+              <td><input type="number" step="0.5" class="cell-input att-${i}" oninput="handleInput()"></td>
+              <td><input type="number" step="0.5" class="cell-input ot-${i}" oninput="handleInput()"></td>
+              <td><input type="number" step="1" class="cell-input loan-${i}" oninput="handleInput()"></td>
             </tr>`;
           }
           html += `</tbody></table>
@@ -232,7 +193,8 @@
       function calculate() {
         staff.forEach((p, i) => {
           let days = 0, loan = 0;
-          let rate = parseFloat(document.getElementById(`rate-${i}`).value) || 0;
+          let rateEl = document.getElementById(`rate-${i}`);
+          let rate = rateEl ? parseFloat(rateEl.value) : p.rate;
           document.querySelectorAll(`.att-${i}`).forEach((el) => (days += parseFloat(el.value) || 0));
           document.querySelectorAll(`.loan-${i}`).forEach((el) => (loan += parseFloat(el.value) || 0));
           document.getElementById(`total-days-${i}`).innerText = days;
@@ -242,15 +204,48 @@
         });
       }
 
-      function saveAll() {
+      function saveAll(manual = false) {
         const m = document.getElementById("selectMonth").value;
         const y = document.getElementById("selectYear").value;
         const key = `payroll/${y}/${m}/P${currentPeriod}`;
         const data = { inputs: {} };
+        
         document.querySelectorAll(".cell-input").forEach((el, idx) => {
           if (el.value) data.inputs[idx] = el.value;
         });
-        db.ref(key).set(data).then(() => alert("រក្សាទុកជោគជ័យ! ✅"));
+
+        db.ref(key).set(data).then(() => {
+          document.getElementById("statusLabel").innerText = "ស្ថានភាព: រក្សាទុកស្វ័យប្រវត្តិរួចរាល់ (" + new Date().toLocaleTimeString() + ")";
+          if (manual) alert("រក្សាទុកជោគជ័យ! ✅");
+        });
+      }
+
+      function updateGlobalRate(index, newRate) {
+        const rate = parseFloat(newRate) || 0;
+        staff[index].rate = rate;
+        db.ref("global_staff_list").set(staff);
+        calculate();
+        saveAll(false);
+      }
+
+      function addNewStaff() {
+        let name = prompt("បញ្ចូលឈ្មោះជាងថ្មី:");
+        if (name) {
+          let rate = prompt("បញ្ចូលប្រាក់ឈ្នួលក្នុង ១ ថ្ងៃ ($):", "15");
+          if (rate !== null) {
+            staff.push({ name: name, rate: parseFloat(rate) || 0 });
+            db.ref("global_staff_list").set(staff).then(() => {
+              loadValues();
+            });
+          }
+        }
+      }
+
+      function deleteStaff(index) {
+        if (confirm("តើប្អូនចង់លុប " + staff[index].name + " ចេញពីប្រព័ន្ធមែនទេ?")) {
+          staff.splice(index, 1);
+          db.ref("global_staff_list").set(staff).then(() => loadValues());
+        }
       }
     </script>
   </body>
