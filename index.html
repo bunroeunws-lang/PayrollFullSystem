@@ -41,9 +41,38 @@
         table { font-size: 11px; }
       }
 
+      /* កូដកែសម្រួលសម្រាប់ការបោះពុម្ពលើ iPhone ឱ្យនៅ ១ សន្លឹកស្អាត */
       @media print {
-        body { width: 765px; margin: 0; padding: 0; }
-        .no-print, .action-col { display: none !important; }
+        @page { 
+          size: A4; 
+          margin: 5mm; /* បន្ថែមគម្លាតបន្តិចដើម្បីកុំឱ្យដាច់ជ្រុង */
+        }
+        
+        body { 
+          background: white !important; 
+          padding: 0 !important; 
+          margin: 0 !important;
+        }
+        
+        .no-print { 
+          display: none !important; 
+        }
+        
+        .staff-card { 
+          box-shadow: none !important; 
+          border: 1px solid var(--border) !important; 
+          margin: 0 auto !important; 
+          width: 100% !important; 
+          /* កែសម្រួល zoom ឱ្យតូចជាងមុនបន្តិច ដើម្បីកុំឱ្យឆ្លងក្រដាស */
+          zoom: 0.75; 
+          -webkit-print-color-adjust: exact;
+          page-break-inside: avoid; /* ការពារកុំឱ្យកាត់ពាក់កណ្តាលតារាង */
+        }
+
+        /* កំណត់ឱ្យតារាងមានកម្ពស់ល្មមជាមួយក្រដាស A4 */
+        td { 
+          height: 38px !important; 
+        }
       }
     </style>
   </head>
